@@ -1,7 +1,6 @@
 const getComputerChoice = () => {
     const choices = ["Rock", "Scissor", "Paper"]
     const randomChoice = choices[Math.floor(Math.random(0, 1) * 3)]
-    console.log('Computer choose: ' + randomChoice)
     return randomChoice
 }
 
@@ -11,26 +10,69 @@ const getHumanChoice = () => {
     if(choice.toLowerCase() !== 'rock' && choice.toLowerCase() !== 'paper' && choice.toLowerCase() !== 'scissor') {
         return getHumanChoice()
     }
-    console.log('You choose: ' + choice.toLowerCase())
     return choice
 }
 
 let humanScore = 0
 let computerScore = 0
 
-const printScore = () => {
-    console.log(`Human: ${humanScore}, Computer: ${computerScore}`)
-}
-const win = (msg) => {
-    humanScore++;
-    console.log(msg)
-    printScore()
+const updateActionUI = (result, humanChoice, computerChoice) => {
+    const actionUI = document.querySelector(".action")
+    const resultUI = document.querySelector(".result")
+
+    let msg = `Human choose ${humanChoice}, Computer choose ${computerChoice}`;
+    actionUI.textContent = msg
+
+    let res = ""
+    switch(result) {
+        case "win":
+            res += `You win, ${humanChoice} beats ${computerChoice}`
+            break;
+        case "draw":
+            res += `Draw!`
+            break;
+        case "lose":
+            res += `You lose, ${computerChoice} beats ${humanChoice}`
+            break;
+    }
+
+    resultUI.textContent = res
 }
 
-const lose = (msg) => {
-    computerScore++;
-    console.log(msg)
-    printScore()
+const updateScoreUI = (user) => {
+    const userScore = document.querySelector(user)
+    if(user === ".human") userScore.textContent = humanScore
+    else userScore.textContent = computerScore
+}
+
+const updateResult = (result, humanChoice, computerChoice) => {
+    switch(result) {
+        case "win":
+            humanScore++;
+            updateScoreUI(".human")
+            break
+        case "lose":
+            computerScore++;
+            updateScoreUI(".computer")
+            break
+    }
+
+    updateActionUI(result, humanChoice, computerChoice)
+}
+
+const announceWinner = (user) => {
+    const announceDiv = document.querySelector(".announcement")
+    announceDiv.textContent = `${user} is the final winner!`
+}
+
+const resetGame = () => {
+    humanScore = 0;
+    computerScore = 0;
+    updateScoreUI(".human")
+    updateScoreUI(".computer")
+    document.querySelector(".action").textContent = ""
+    document.querySelector(".result").textContent = ""
+    document.querySelector(".announcement").textContent = ""
 }
 
 const playRound = (humanChoice, computerChoice) => {
@@ -39,35 +81,43 @@ const playRound = (humanChoice, computerChoice) => {
     const human = choices.findIndex(choice => choice === humanChoice.toLowerCase())
     const computer = choices.findIndex(choice => choice === computerChoice.toLowerCase())
 
-    const loseMsg = `You lose, ${choices[computer]} beats ${choices[human]}`
-    const winMsg = `You win, ${choices[human]} beats ${choices[computer]}`
-
     if(human === computer) {
-        console.log("Draw!")
-        printScore()
+        updateResult('draw', choices[human], choices[computer])
     }
     //Special case if human or computer choose rock and paper
     else if(human !== 1 && computer !== 1) {
-        if(human < computer) {
-            win(winMsg)
+        if(human > computer) {
+            updateResult('win', choices[human], choices[computer])
         }
         else {
-            lose(loseMsg)
+            updateResult('lose', choices[human], choices[computer])
         }
     }
-    else if(human < computer) {
-        lose(loseMsg)
+    else if(human > computer) {
+        updateResult('lose', choices[human], choices[computer])
     }
     else {
-        win(winMsg)
+        updateResult('win', choices[human], choices[computer])
     }
+
+    if(humanScore === 5) announceWinner("Human")
+    else if(computerScore === 5) announceWinner("Computer")
 }
 
-const playGame = () => {
-    for(i=0; i<5; i++) {
-        playRound(getHumanChoice(), getComputerChoice())
-    }
-}
 
-playGame()
+const btn = document.querySelector(".button-container")
 
+btn.addEventListener("click", e => {
+    e.preventDefault()
+    if(humanScore === 5 || computerScore === 5) 
+        document.querySelector(".announcement").textContent = "Retry the game!"
+    
+    else playRound(e.target.id, getComputerChoice())
+})
+
+const resetBtn = document.querySelector(".reset-button")
+
+resetBtn.addEventListener("click", e => {
+    e.preventDefault()
+    resetGame()
+})

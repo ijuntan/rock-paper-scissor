@@ -3,9 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="./function.js"></script>
+    <script src="./function.js" defer></script>
+    <style>
+        body {
+            min-height: 100vh;
+            width: 100vw;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap:12px;
+        }
+        .button-container {
+            display: flex;
+            gap: 12px;
+        }
+        #rock {
+            background-color: white;
+        }
+        #scissor {
+            background-color: yellow;
+        }
+        #paper {
+            background-color: skyblue
+        }
+        .score {
+            display: flex;
+            gap: 12px;
+        }
+    </style>
     <title>Document</title>
 </head>
 <body>
+    <p class="score">
+        Human: <span class="human">0</span>
+        ,
+        Computer: <span class="computer">0</span>
+    </p>
+    <button class="reset-button">
+        Reset Game
+    </button>
+    <div class="button-container">
+        <button id="rock">
+            Rock
+        </button>
+        <button id="scissor">
+            Scissor
+        </button>
+        <button id="paper">
+            Paper
+        </button>
+    </div>
+
+    <p class="action">
+    </p>
+    <p class="result">
+    </p>
+
+    <p class="announcement">
+    </p>
 </body>
 </html>
